@@ -6,16 +6,17 @@ from datetime import datetime
 app = Flask(__name__)
 LOG_FILE = "log.csv"
 
-def is_duplicate(ip, uuid):
+def is_duplicate(uuid):
     if not os.path.exists(LOG_FILE):
         return False
 
     with open(LOG_FILE, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if row.get('ip') == ip and row.get('uuid') == uuid:
-                return True
+            if row.get('uuid') == uuid:
+                return True  # ✅ uuid만 같으면 중복으로 간주
     return False
+
 
 @app.route('/', methods=['GET', 'POST'])
 def form():
@@ -30,7 +31,7 @@ def form():
         if not uuid or not identity or not area:
             return "<h3>잘못된 요청입니다. 정보가 누락되었습니다.</h3>"
 
-        if is_duplicate(ip, uuid):
+        if is_duplicate(uuid):
             return "<h3>중복 참여는 불가능합니다.</h3>"
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
