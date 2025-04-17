@@ -1,50 +1,54 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>신분 선택</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>신분 선택</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+  <div class="container">
     <h2>당신의 신분을 선택해주세요</h2>
     <form method="POST">
-        <input type="hidden" name="uuid" id="uuid">
-        <input type="hidden" name="area" id="area">
+      <input type="hidden" name="uuid" id="uuid">
+      <input type="hidden" name="area" id="area">
 
-        <button type="submit" name="identity" value="재학생">재학생</button><br><br>
-        <button type="submit" name="identity" value="졸업생">졸업생</button><br><br>
-        <button type="submit" name="identity" value="교직원">교직원</button><br><br>
-        <button type="submit" name="identity" value="일반인">일반인</button><br><br>
+      <button type="submit" name="identity" value="재학생">재학생</button>
+      <button type="submit" name="identity" value="졸업생">졸업생</button>
+      <button type="submit" name="identity" value="교직원">교직원</button>
+      <button type="submit" name="identity" value="일반인">일반인</button>
     </form>
+  </div>
 
-    <script>
-        function getOrCreateUUID() {
-            const cookieName = "visitor_uuid=";
-            const cookies = document.cookie.split(';');
+  <script>
+    function getOrCreateUUID() {
+      const cookieName = "visitor_uuid=";
+      const cookies = document.cookie.split(';');
 
-            let found = false;
-            for (let i = 0; i < cookies.length; i++) {
-                const c = cookies[i].trim();
-                if (c.indexOf(cookieName) === 0) {
-                    document.getElementById("uuid").value = c.substring(cookieName.length);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                const uuid = crypto.randomUUID();
-                document.cookie = cookieName + uuid + "; path=/; max-age=2592000";
-                document.getElementById("uuid").value = uuid;
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const area = urlParams.get('area');
-            if (area) {
-                document.getElementById("area").value = area;
-            }
+      let found = false;
+      for (let i = 0; i < cookies.length; i++) {
+        const c = cookies[i].trim();
+        if (c.indexOf(cookieName) === 0) {
+          document.getElementById("uuid").value = c.substring(cookieName.length);
+          found = true;
+          break;
         }
+      }
 
-        window.onload = getOrCreateUUID;
-    </script>
+      if (!found) {
+        const uuid = crypto.randomUUID();
+        document.cookie = cookieName + uuid + "; path=/; max-age=2592000";
+        document.getElementById("uuid").value = uuid;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const area = urlParams.get('area');
+      if (area) {
+        document.getElementById("area").value = area;
+      }
+    }
+
+    window.onload = getOrCreateUUID;
+  </script>
 </body>
 </html>
