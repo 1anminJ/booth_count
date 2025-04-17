@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 import csv
 import os
 from datetime import datetime
+from flask import send_file
 
 app = Flask(__name__)
 LOG_FILE = "log.csv"
@@ -16,6 +17,30 @@ def is_duplicate(ip, uuid):
             if row.get('ip') == ip and row.get('uuid') == uuid:
                 return True
     return False
+
+@app.route('/admin')
+def admin():
+    if not os.path.exists(LOG_FILE):
+        return "<h3>아직 아무 데이터도 없습니다.</h3>"
+
+    with open(LOG_FILE, newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        rows = list(reader)
+
+    html = "<h2>제출 내역</h2><table border='1' style='border-collapse: collapse;'>"
+    for row in rows:
+        html += "<tr>" + "".join([f"<td style='padding: 5px 10px;'>{cell}</td>" for cell in row]) + "</tr>"
+    html += "</table><br>"
+
+    html += "<form action='/download'><button type='submit'>CSV 다운로드</button></form>"
+
+    return html
+
+@app.route('/download')
+def download_csv():
+    if os.path.exists(LOG_FILE):
+        return send_file(LOG_FILE, as_attachment=True)
+    return "<h3>다운로드할 데이터가 없습니다.</h3>"
 
 @app.route('/', methods=['GET', 'POST'])
 def form():
