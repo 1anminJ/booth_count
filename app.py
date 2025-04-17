@@ -36,7 +36,7 @@ def form():
             return "<h3>잘못된 요청입니다. 정보가 누락되었습니다.</h3>"
 
         if is_duplicate_today(uuid, area):
-            return "<h3>오늘은 이 부스에서 이미 참여하셨습니다.</h3>"
+            return render_template("duplicate.html")
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -47,10 +47,9 @@ def form():
                 writer.writerow(['timestamp', 'area', 'ip', 'uuid', 'identity'])
             writer.writerow([timestamp, area, ip, uuid, identity])
 
-        return f"<h3>{identity}으로 참여해주셔서 감사합니다!</h3>"
+        return render_template("thanks.html", identity=identity)
 
     return render_template("form.html")
-
 
 @app.route('/admin')
 def admin():
@@ -68,13 +67,11 @@ def admin():
     html += "<form action='/download'><button type='submit'>CSV 다운로드</button></form>"
     return html
 
-
 @app.route('/download')
 def download_csv():
     if os.path.exists(LOG_FILE):
         return send_file(LOG_FILE, as_attachment=True)
     return "<h3>다운로드할 데이터가 없습니다.</h3>"
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

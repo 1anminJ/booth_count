@@ -1,0 +1,51 @@
+body {
+  background-color: #f2f4f7;
+  font-family: 'Apple SD Gothic Neo', sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: white;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 24px;
+  font-size: 22px;
+  color: #006EA9; /* DMU BLUE */
+}
+
+p {
+  font-size: 16px;
+  color: #555;
+}
+
+button, a.button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 16px;
+  background-color: #006EA9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover, a.button:hover {
+  background-color: #005c8e;
+}
