@@ -6,37 +6,37 @@ from datetime import datetime
 app = Flask(__name__)
 LOG_FILE = "log.csv"
 
-def is_duplicate_today(uuid):
+# ✅ UUID + area + today 조합 중복 체크
+def is_duplicate_today(uuid, area):
     if not os.path.exists(LOG_FILE):
         return False
 
-    today = datetime.now().date().isoformat()
+    today = datetime.now().strftime('%Y-%m-%d')
 
     with open(LOG_FILE, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if row.get('uuid') == uuid:
+            if row.get('uuid') == uuid and row.get('area') == area:
                 row_date = row.get('timestamp', '')[:10]
                 if row_date == today:
                     return True
     return False
 
-
 @app.route('/', methods=['GET', 'POST'])
 def form():
-    area = request.args.get('area')  # GET에서 받아오기
+    area = request.args.get('area')
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     if request.method == 'POST':
         uuid = request.form.get('uuid')
         identity = request.form.get('identity')
-        area = request.form.get('area')  # POST에서도 받아오기
+        area = request.form.get('area')
 
         if not uuid or not identity or not area:
             return "<h3>잘못된 요청입니다. 정보가 누락되었습니다.</h3>"
 
-        if is_duplicate_today(uuid):
-            return "<h3>오늘은 이미 참여하셨습니다.(하루에 한 부스만 가능합니다.)</h3>"
+        if is_duplicate_today(uuid, area):
+            return "<h3 style='color:red;'>오늘은 이 부스에서 이미 참여하셨습니다.</h3><a href='/'>돌아가기</a>"
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -47,7 +47,7 @@ def form():
                 writer.writerow(['timestamp', 'area', 'ip', 'uuid', 'identity'])
             writer.writerow([timestamp, area, ip, uuid, identity])
 
-        return f"<h3>{identity}으로 참여해주셔서 감사합니다!</h3>"
+        return f"<h3>{identity}으로 참여해주셔서 감사합니다!</h3><a href='/'>다시 시작</a>"
 
     return render_template("form.html")
 
