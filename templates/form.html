@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>신분 선택</title>
+</head>
+<body>
+    <h2>당신의 신분을 선택해주세요</h2>
+    <form method="POST">
+        <input type="hidden" name="uuid" id="uuid">
+        <button type="submit" name="identity" value="재학생">재학생</button><br><br>
+        <button type="submit" name="identity" value="졸업생">졸업생</button><br><br>
+        <button type="submit" name="identity" value="교직원">교직원</button><br><br>
+        <button type="submit" name="identity" value="일반인">일반인</button><br><br>
+    </form>
+
+    <script>
+        function getOrCreateUUID() {
+            const cookieName = "visitor_uuid=";
+            const cookies = document.cookie.split(';');
+
+            for (let i = 0; i < cookies.length; i++) {
+                const c = cookies[i].trim();
+                if (c.indexOf(cookieName) === 0) {
+                    document.getElementById("uuid").value = c.substring(cookieName.length);
+                    return;
+                }
+            }
+
+            const uuid = crypto.randomUUID();
+            document.cookie = cookieName + uuid + "; path=/; max-age=2592000"; // 30일 유지
+            document.getElementById("uuid").value = uuid;
+        }
+
+        window.onload = getOrCreateUUID;
+    </script>
+</body>
+</html>
