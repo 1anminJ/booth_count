@@ -17,30 +17,36 @@
     </form>
 
     <script>
-        function getOrCreateUUID() {
-            const cookieName = "visitor_uuid=";
-            const cookies = document.cookie.split(';');
+    function getOrCreateUUID() {
+        const cookieName = "visitor_uuid=";
+        const cookies = document.cookie.split(';');
 
-            for (let i = 0; i < cookies.length; i++) {
-                const c = cookies[i].trim();
-                if (c.indexOf(cookieName) === 0) {
-                    document.getElementById("uuid").value = c.substring(cookieName.length);
-                    break;
-                }
-            }
-
-            const uuid = crypto.randomUUID();
-            document.cookie = cookieName + uuid + "; path=/; max-age=2592000";
-            document.getElementById("uuid").value = uuid;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const area = urlParams.get('area');
-            if (area) {
-                document.getElementById("area").value = area;
+        let found = false;
+        for (let i = 0; i < cookies.length; i++) {
+            const c = cookies[i].trim();
+            if (c.indexOf(cookieName) === 0) {
+                document.getElementById("uuid").value = c.substring(cookieName.length);
+                found = true;
+                break;
             }
         }
 
-        window.onload = getOrCreateUUID;
-    </script>
+        if (!found) {
+            const uuid = crypto.randomUUID();
+            document.cookie = cookieName + uuid + "; path=/; max-age=2592000"; // 30일
+            document.getElementById("uuid").value = uuid;
+        }
+
+        // area 파라미터 처리
+        const urlParams = new URLSearchParams(window.location.search);
+        const area = urlParams.get('area');
+        if (area) {
+            document.getElementById("area").value = area;
+        }
+    }
+
+    window.onload = getOrCreateUUID;
+</script>
+
 </body>
 </html>
