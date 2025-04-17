@@ -8,6 +8,8 @@
     <h2>당신의 신분을 선택해주세요</h2>
     <form method="POST">
         <input type="hidden" name="uuid" id="uuid">
+        <input type="hidden" name="area" id="area">
+
         <button type="submit" name="identity" value="재학생">재학생</button><br><br>
         <button type="submit" name="identity" value="졸업생">졸업생</button><br><br>
         <button type="submit" name="identity" value="교직원">교직원</button><br><br>
@@ -23,13 +25,19 @@
                 const c = cookies[i].trim();
                 if (c.indexOf(cookieName) === 0) {
                     document.getElementById("uuid").value = c.substring(cookieName.length);
-                    return;
+                    break;
                 }
             }
 
             const uuid = crypto.randomUUID();
-            document.cookie = cookieName + uuid + "; path=/; max-age=2592000"; // 30일 유지
+            document.cookie = cookieName + uuid + "; path=/; max-age=2592000";
             document.getElementById("uuid").value = uuid;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const area = urlParams.get('area');
+            if (area) {
+                document.getElementById("area").value = area;
+            }
         }
 
         window.onload = getOrCreateUUID;
