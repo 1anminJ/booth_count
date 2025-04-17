@@ -36,7 +36,7 @@ def form():
             return "<h3>잘못된 요청입니다. 정보가 누락되었습니다.</h3>"
 
         if is_duplicate_today(uuid, area):
-            return "<h3 style='color:red;'>오늘은 이 부스에서 이미 참여하셨습니다.</h3><a href='/'>돌아가기</a>"
+            return "<h3>오늘은 이 부스에서 이미 참여하셨습니다.</h3>"
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -47,7 +47,7 @@ def form():
                 writer.writerow(['timestamp', 'area', 'ip', 'uuid', 'identity'])
             writer.writerow([timestamp, area, ip, uuid, identity])
 
-        return f"<h3>{identity}으로 참여해주셔서 감사합니다!</h3><a href='/'>다시 시작</a>"
+        return f"<h3>{identity}으로 참여해주셔서 감사합니다!</h3>"
 
     return render_template("form.html")
 
