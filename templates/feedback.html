@@ -7,9 +7,13 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+<header class="top-header">
+    <div class="header-content">DMU</div>
+  </header>
   <div class="page-wrapper">
-    <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
-    <div class="box">
+    <div class="content-wrapper">
+      <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
+      <div class="container">
       <h2>이 부스에 만족하셨습니까?</h2>
       <form method="POST" action="/submit">
         <input type="hidden" name="uuid" value="{{ uuid }}">
@@ -21,6 +25,7 @@
         </div>
         <button type="submit">제출하기</button>
       </form>
+    </div>
     </div>
   </div>
 </body>
