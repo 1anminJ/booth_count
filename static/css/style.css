@@ -49,3 +49,31 @@ button, a.button {
 button:hover, a.button:hover {
   background-color: #005c8e;
 }
+
+form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #006ea9;
+  color: white;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #005080;
+}
+
+.radio-group {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.radio-group label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #333;
+}
