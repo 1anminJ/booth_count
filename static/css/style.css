@@ -92,3 +92,13 @@ form button:hover {
   height: auto;
   object-fit: contain;
 }
+
+.top-image {
+  width: 100px;
+  max-height: 120px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 16px;
+  display: block;
+}
+
