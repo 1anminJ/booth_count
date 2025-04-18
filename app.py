@@ -56,7 +56,29 @@ def feedback():
     area = request.form.get('area')
     identity = request.form.get('identity')
 
-    return render_template('thanks.html', uuid=uuid, area=area, identity=identity)
+    return render_template('feedback.html', uuid=uuid, area=area, identity=identity)
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    uuid = request.form.get('uuid')
+    area = request.form.get('area')
+    identity = request.form.get('identity')
+    satisfaction = request.form.get('satisfaction')
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # 중복 체크
+    if is_duplicate_today(uuid, area):
+        return render_template('duplicate.html')
+
+    is_new_file = not os.path.exists(LOG_FILE) or os.path.getsize(LOG_FILE) == 0
+    with open(LOG_FILE, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        if is_new_file:
+            writer.writerow(['timestamp', 'area', 'ip', 'uuid', 'identity', 'satisfaction'])
+        writer.writerow([timestamp, area, ip, uuid, identity, satisfaction])
+
+    return render_template('thanks.html', identity=identity)
 
 
 @app.route('/admin')
