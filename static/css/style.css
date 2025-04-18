@@ -86,9 +86,13 @@ form button:hover {
 
 .image-box {
   text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .image-box img {
   max-width: 180px;
+  max-height: 180px;
   height: auto;
+  object-fit: contain;
 }
