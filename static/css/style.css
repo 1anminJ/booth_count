@@ -10,7 +10,6 @@ body {
   justify-content: center;
   align-items: center;
   height: calc(100vh - 60px); /* 헤더 높이 고려 */
-  padding-top: 60px; /* 헤더에 가려지지 않도록 여백 */
   flex-direction: column;
 }
 
