@@ -7,31 +7,30 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<div class="image-box">
-        <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지">
+  <div class="page-wrapper">
+    <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
+    <div class="box">
+      <h2>당신의 신분을 선택해주세요</h2>
+      <form method="POST" action="/feedback">
+        <input type="hidden" name="uuid" id="uuid">
+        <input type="hidden" name="area" id="area">
+        <input type="hidden" name="identity" id="identity">
+        <button type="submit" onclick="setIdentity('재학생')">재학생</button>
+        <button type="submit" onclick="setIdentity('졸업생')">졸업생</button>
+        <button type="submit" onclick="setIdentity('교직원')">교직원</button>
+        <button type="submit" onclick="setIdentity('일반인')">일반인</button>
+      </form>
     </div>
-  <div class="container">
-    <h2>당신의 신분을 선택해주세요</h2>
-    <form method="POST" action="/feedback">
-  <input type="hidden" name="uuid" id="uuid">
-  <input type="hidden" name="area" id="area">
-  <input type="hidden" name="identity" id="identity">
-
-  <button type="submit" onclick="setIdentity('재학생')">재학생</button>
-  <button type="submit" onclick="setIdentity('졸업생')">졸업생</button>
-  <button type="submit" onclick="setIdentity('교직원')">교직원</button>
-  <button type="submit" onclick="setIdentity('일반인')">일반인</button>
-</form>
   </div>
 
   <script>
-      function setIdentity(identity) {
-        document.getElementById("identity").value = identity;
-      }
+    function setIdentity(identity) {
+      document.getElementById("identity").value = identity;
+    }
+
     function getOrCreateUUID() {
       const cookieName = "visitor_uuid=";
       const cookies = document.cookie.split(';');
-
       let found = false;
       for (let i = 0; i < cookies.length; i++) {
         const c = cookies[i].trim();
@@ -41,7 +40,6 @@
           break;
         }
       }
-
       if (!found) {
         const uuid = crypto.randomUUID();
         document.cookie = cookieName + uuid + "; path=/; max-age=2592000";
