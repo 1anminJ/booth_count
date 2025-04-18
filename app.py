@@ -50,6 +50,15 @@ def form():
 
     return render_template("form.html")
 
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    uuid = request.form.get('uuid')
+    area = request.form.get('area')
+    identity = request.form.get('identity')
+
+    return render_template('feedback.html', uuid=uuid, area=area, identity=identity)
+
+
 @app.route('/admin')
 def admin():
     if not os.path.exists(LOG_FILE):
