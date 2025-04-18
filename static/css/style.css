@@ -1,18 +1,17 @@
 body {
-  background-color: #f2f4f7;
-  font-family: 'Apple SD Gothic Neo', sans-serif;
-  color: #333;
   margin: 0;
   padding: 0;
+  font-family: 'Apple SD Gothic Neo', sans-serif;
+  background-color: #f2f4f7;
 }
 
 .page-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: calc(100vh - 60px); /* 헤더 높이 고려 */
+  padding-top: 60px; /* 헤더에 가려지지 않도록 여백 */
   flex-direction: column;
-  background-color: #f2f4f7;
 }
 
 .container {
@@ -104,5 +103,23 @@ form button:hover {
 .top-image {
   width: 120px;
   height: auto;
+}
+
+.top-header {
+  width: 100%;
+  background-color: #006EA9;
+  padding: 12px 24px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
