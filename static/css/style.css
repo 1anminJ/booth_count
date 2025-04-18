@@ -127,14 +127,14 @@ form button:hover {
   margin-top: 40px;
   padding: 10px 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   color: #777;
-  background-color: #f9f9f9;
+  background-color: #f2f4f7;
   width: 100%;
 }
 
 .footer a {
-  color: #f2f4f7;
+  color: #006EA9;
   text-decoration: none;
   margin: 0 4px;
 }
