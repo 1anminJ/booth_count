@@ -56,7 +56,7 @@ def feedback():
     area = request.form.get('area')
     identity = request.form.get('identity')
 
-    return render_template('feedback.html', uuid=uuid, area=area, identity=identity)
+    return render_template('thanks.html', uuid=uuid, area=area, identity=identity)
 
 
 @app.route('/admin')
