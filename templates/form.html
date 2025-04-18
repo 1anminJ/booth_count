@@ -9,18 +9,22 @@
 <body>
   <div class="container">
     <h2>당신의 신분을 선택해주세요</h2>
-    <form method="POST">
-      <input type="hidden" name="uuid" id="uuid">
-      <input type="hidden" name="area" id="area">
+    <form method="POST" action="/feedback">
+  <input type="hidden" name="uuid" id="uuid">
+  <input type="hidden" name="area" id="area">
+  <input type="hidden" name="identity" id="identity">
 
-      <button type="submit" name="identity" value="재학생">재학생</button>
-      <button type="submit" name="identity" value="졸업생">졸업생</button>
-      <button type="submit" name="identity" value="교직원">교직원</button>
-      <button type="submit" name="identity" value="일반인">일반인</button>
-    </form>
+  <button type="submit" onclick="setIdentity('재학생')">재학생</button>
+  <button type="submit" onclick="setIdentity('졸업생')">졸업생</button>
+  <button type="submit" onclick="setIdentity('교직원')">교직원</button>
+  <button type="submit" onclick="setIdentity('일반인')">일반인</button>
+</form>
   </div>
 
   <script>
+      function setIdentity(identity) {
+        document.getElementById("identity").value = identity;
+      }
     function getOrCreateUUID() {
       const cookieName = "visitor_uuid=";
       const cookies = document.cookie.split(';');
