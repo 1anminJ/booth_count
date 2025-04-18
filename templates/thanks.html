@@ -7,12 +7,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<div class="image-box">
-    <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지">
-  </div>
-  <div class="container">
-    <h2>참여해주셔서 감사합니다!</h2>
-    <p>소중한 의견이 정상적으로 저장되었습니다.</p>
+  <div class="page-wrapper">
+    <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
+    <div class="box">
+      <h2>참여해주셔서 감사합니다!</h2>
+      <p>소중한 의견이 정상적으로 저장되었습니다.</p>
+    </div>
   </div>
 </body>
 </html>
