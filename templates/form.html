@@ -15,14 +15,14 @@
       <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
       <div class="container">
       <h2>당신의 신분을 선택해주세요</h2>
-      <form method="POST" action="/feedback">
+      <form id="identityForm" method="POST" action="/feedback">
         <input type="hidden" name="uuid" id="uuid">
         <input type="hidden" name="area" id="area">
         <input type="hidden" name="identity" id="identity">
-        <button type="submit" onclick="setIdentity('재학생')">재학생</button>
-        <button type="submit" onclick="setIdentity('졸업생')">졸업생</button>
-        <button type="submit" onclick="setIdentity('교직원')">교직원</button>
-        <button type="submit" onclick="setIdentity('일반인')">일반인</button>
+        <button type="button" onclick="checkLocationAndSubmit('재학생')">재학생</button>
+        <button type="button" onclick="checkLocationAndSubmit('졸업생')">졸업생</button>
+        <button type="button" onclick="checkLocationAndSubmit('교직원')">교직원</button>
+        <button type="button" onclick="checkLocationAndSubmit('일반인')">일반인</button>
       </form>
         </div>
     </div>
@@ -31,6 +31,21 @@
   <script>
     function setIdentity(identity) {
       document.getElementById("identity").value = identity;
+    }
+
+    function toRad(value) {
+      return value * Math.PI / 180;
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6378137;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
     }
 
     function getOrCreateUUID() {
@@ -58,7 +73,33 @@
       }
     }
 
-    window.onload = getOrCreateUUID;
+    function checkLocationAndSubmit(identity) {
+    setIdentity(identity);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+        const baseLat = 37.50092688176289;
+        const baseLon = 126.86744039265021;
+        const distance = calculateDistance(baseLat, baseLon, userLat, userLon);
+        if (distance > 160) {
+          console.error("distance:", distance);
+          alert("유효하지 않은 위치입니다. 부스에 가까운 곳에서 참여해주세요.");
+          return;
+        }
+        document.getElementById("identityForm").submit();
+      }, function(error) {
+        console.error("Error getting distance data.", error);
+        alert("위치 정보를 가져오는 데 실패했습니다.");
+      });
+    } else {
+      alert("지원되지 않는 브라우저입니다.");
+    }
+  }
+
+    window.onload = function() {
+      getOrCreateUUID();
+    };
   </script>
 <footer class="footer">
   <p>Developed by
