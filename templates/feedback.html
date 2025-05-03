@@ -15,19 +15,28 @@
       <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
       <div class="container">
       <h2>이 부스에 만족하셨습니까?</h2>
-      <form method="POST" action="/submit">
-        <input type="hidden" name="uuid" value="{{ uuid }}">
-        <input type="hidden" name="area" value="{{ area }}">
-        <input type="hidden" name="identity" value="{{ identity }}">
-        <div class="radio-group">
-          <label><input type="radio" name="satisfaction" value="예" required> 예</label>
-          <label><input type="radio" name="satisfaction" value="아니요"> 아니요</label>
-        </div>
-        <button type="submit">제출하기</button>
+      <form id="feedbackForm" method="POST" action="/submit">
+          <input type="hidden" name="uuid" value="{{ uuid }}">
+          <input type="hidden" name="area" value="{{ area }}">
+          <input type="hidden" name="identity" value="{{ identity }}">
+          <input type="hidden" name="satisfaction" id="satisfaction">
+
+          <div class="button-group">
+              <button type="button" onclick="submitFeedback('예')">예</button>
+              <button type="button" class="button-no" onclick="submitFeedback('아니요')">아니요</button>
+          </div>
+
       </form>
     </div>
     </div>
   </div>
+
+    <script>
+        function submitFeedback(value) {
+          document.getElementById("satisfaction").value = value;
+          document.getElementById("feedbackForm").submit();
+        }
+    </script>
 <footer class="footer">
   <p>Developed by
     <a href="https://github.com/1anminJ" target="_blank">@1anminJ</a> &amp;

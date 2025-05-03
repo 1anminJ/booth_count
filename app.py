@@ -5,7 +5,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 LOG_FILE = "log.csv"
-# ✅ UUID + area + today 조합 중복 체크
+#  UUID + area + today 조합 중복 체크
 def is_duplicate_today(uuid, area):
     if not os.path.exists(LOG_FILE):
         return False
