@@ -79,8 +79,8 @@
       navigator.geolocation.getCurrentPosition(function(position) {
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
-        const baseLat = 37.50641645285526;
-        const baseLon = 126.88953027674593;
+        const baseLat = 37.50092688176289;
+        const baseLon = 126.86744039265021;
         const distance = calculateDistance(baseLat, baseLon, userLat, userLon);
         if (distance > 160) {
           console.error("distance:", distance);
