@@ -19,10 +19,10 @@
         <input type="hidden" name="uuid" id="uuid">
         <input type="hidden" name="area" id="area">
         <input type="hidden" name="identity" id="identity">
-        <button type="button" onclick="checkLocationAndSubmit('재학생')">재학생</button>
-        <button type="button" onclick="checkLocationAndSubmit('졸업생')">졸업생</button>
-        <button type="button" onclick="checkLocationAndSubmit('교직원')">교직원</button>
-        <button type="button" onclick="checkLocationAndSubmit('일반인')">일반인</button>
+        <button type="button" onclick="checkLocationAndSubmit('STUDENT')">재학생</button>
+        <button type="button" onclick="checkLocationAndSubmit('GRADUATE')">졸업생</button>
+        <button type="button" onclick="checkLocationAndSubmit('STAFF')">교직원</button>
+        <button type="button" onclick="checkLocationAndSubmit('GENERAL')">일반인</button>
       </form>
         </div>
     </div>
@@ -79,8 +79,8 @@
       navigator.geolocation.getCurrentPosition(function(position) {
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
-        const baseLat = 37.50092688176289;
-        const baseLon = 126.86744039265021;
+        const baseLat = 37.50641645285526;
+        const baseLon = 126.88953027674593;
         const distance = calculateDistance(baseLat, baseLon, userLat, userLon);
         if (distance > 160) {
           console.error("distance:", distance);
