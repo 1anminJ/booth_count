@@ -19,6 +19,10 @@ class LogService:
 
         if isinstance(satisfaction, str):
             satisfaction = satisfaction.lower() == 'true'
+
+        if ip and ',' in ip:
+            ip = ip.split(',')[0].strip()
+
         new_log = Log(
             uuid=uuid,
             area=area,
