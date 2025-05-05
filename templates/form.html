@@ -82,7 +82,8 @@
         const baseLat = 37.50092688176289;
         const baseLon = 126.86744039265021;
         const distance = calculateDistance(baseLat, baseLon, userLat, userLon);
-        if (distance > 160) {
+        // TODO: 테스트 위해 100km로 설정
+        if (distance > 100000) {
           console.error("distance:", distance);
           alert("유효하지 않은 위치입니다. 부스에 가까운 곳에서 참여해주세요.");
           return;
