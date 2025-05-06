@@ -14,7 +14,7 @@ class Log(db.Model):
     __tablename__ = 'logs'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(36), nullable=False)
-    area = db.Column(db.String(50), nullable=False)
+    area = db.Column(db.Integer, nullable=False)
     ip = db.Column(db.String(45), nullable=False)
     satisfaction = db.Column(db.Boolean, nullable=False)
     identity = db.Column(db.Enum(IdentityEnum), nullable=False)

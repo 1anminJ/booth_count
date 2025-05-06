@@ -3,6 +3,18 @@ from models import db, Log
 
 class LogService:
     @staticmethod
+    def validate_params(uuid, area, identity, satisfaction):
+        # 필수 파라미터 확인
+        if not uuid or not area or not identity or satisfaction is None:
+            return False
+
+        # area가 숫자인지 확인
+        if not area.isdigit():
+            return False
+
+        return True
+
+    @staticmethod
     def is_duplicate_today(uuid, area):
         today = date.today()
         record = Log.query.filter(
