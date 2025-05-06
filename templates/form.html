@@ -33,6 +33,19 @@
       document.getElementById("identity").value = identity;
     }
 
+    function checkParameter() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const area = urlParams.get('area');
+
+      // area 파라미터가 없거나 유효하지 않은 경우(정수 값이 아닌 경우)
+      if (!area || !/^\d+$/.test(area)) {
+        window.location.href = '/invalid_access';
+      }
+
+      // area 파라미터가 있으면 입력 필드에 설정
+      document.getElementById("area").value = area;
+    }
+
     function getOrCreateUUID() {
       const cookieName = "visitor_uuid=";
       const cookies = document.cookie.split(';');
@@ -128,6 +141,7 @@
     }
 
     window.onload = function() {
+      checkParameter();
       getOrCreateUUID();
     };
   </script>
