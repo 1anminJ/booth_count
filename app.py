@@ -19,24 +19,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 create_db(app)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def form():
-    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-
-    if request.method == 'POST':
-        uuid = request.form.get('uuid')
-        identity = request.form.get('identity')
-        area = request.form.get('area')
-
-        if not uuid or not identity or not area:
-            return "<h3>잘못된 요청입니다. 정보가 누락되었습니다.</h3>"
-
-        if LogService.is_duplicate_today(uuid, area):
-            return render_template('duplicate.html')
-
-        LogService.add_log(uuid, identity, area, ip)
-        return render_template('thanks.html', identity=identity)
-
     return render_template('form.html')
 
 @app.route('/feedback', methods=['POST'])
@@ -53,6 +37,9 @@ def submit():
     identity = request.form.get('identity')
     satisfaction = request.form.get('satisfaction')
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+    if not LogService.validate_params(uuid, area, identity, satisfaction):
+        return render_template('invalid_access.html')
 
     if LogService.is_duplicate_today(uuid, area):
         return render_template('duplicate.html')
