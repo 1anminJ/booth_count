@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header class="top-header">
+  <header class="top-header">
     <div class="header-content">DMU</div>
   </header>
   <div class="page-wrapper">
@@ -31,21 +31,6 @@
   <script>
     function setIdentity(identity) {
       document.getElementById("identity").value = identity;
-    }
-
-    function toRad(value) {
-      return value * Math.PI / 180;
-    }
-
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6378137;
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
     }
 
     function getOrCreateUUID() {
@@ -73,30 +58,74 @@
       }
     }
 
-    function checkLocationAndSubmit(identity) {
-    setIdentity(identity);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const userLat = position.coords.latitude;
-        const userLon = position.coords.longitude;
-        const baseLat = 37.50092688176289;
-        const baseLon = 126.86744039265021;
-        const distance = calculateDistance(baseLat, baseLon, userLat, userLon);
-        // TODO: 테스트 위해 100km로 설정
-        if (distance > 100000) {
-          console.error("distance:", distance);
-          alert("유효하지 않은 위치입니다. 부스에 가까운 곳에서 참여해주세요.");
-          return;
-        }
-        document.getElementById("identityForm").submit();
-      }, function(error) {
-        console.error("Error getting distance data.", error);
-        alert("위치 정보를 가져오는 데 실패했습니다.");
-      });
-    } else {
-      alert("지원되지 않는 브라우저입니다.");
+    function pointInPolygon(point, polygon) {
+      const x = point[0], y = point[1];
+      let inside = false;
+
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+
+        const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+
+      return inside;
     }
-  }
+
+    function checkLocationAndSubmit(identity) {
+      setIdentity(identity);
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
+
+          // 폴리곤 경계 정의 (위도, 경도)
+          const eventAreaPolygon = [
+            [37.50062214444485, 126.86686416992778],
+            [37.499996975716606, 126.86778130516295],
+            [37.499799688571855, 126.868618513411],
+            [37.50037218396323, 126.86893981714482],
+            [37.50118121843323, 126.86726465146593]
+          ];
+
+          // 사용자 좌표가 폴리곤 내부에 있는지 검사
+          // pointInPolygon 함수는 [경도, 위도] 순서로 입력을 받음
+          const isInEventArea = pointInPolygon(
+            [userLon, userLat],
+            eventAreaPolygon.map(point => [point[1], point[0]])
+          );
+
+          if (!isInEventArea) {
+            console.error("유효하지 않은 위치:", userLat, userLon);
+            alert("유효하지 않은 위치입니다. 부스 근처에서 다시 시도해주세요.");
+            return;
+          }
+
+          // 위치가 유효하면 폼 제출
+          document.getElementById("identityForm").submit();
+        }, function(error) {
+          console.error("위치 정보 획득 실패:", error);
+
+          let errorMessage = "위치 정보를 가져오는 데 실패했습니다.";
+          if (error.code === 1) {
+            errorMessage = "위치 정보 접근이 거부되었습니다. 설정에서 위치 권한을 허용해주세요.";
+          } else if (error.code === 2) {
+            errorMessage = "위치를 확인할 수 없습니다. 다시 시도해주세요.";
+          } else if (error.code === 3) {
+            errorMessage = "위치 정보 요청 시간이 초과되었습니다.";
+          }
+
+          alert(errorMessage);
+        }, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        });
+      } else {
+        alert("지원되지 않는 브라우저입니다.");
+      }
+    }
 
     window.onload = function() {
       getOrCreateUUID();
