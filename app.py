@@ -60,6 +60,9 @@ def submit():
     LogService.add_log(uuid, identity, area, ip, satisfaction)
     return render_template('thanks.html', identity=identity)
 
+@app.route('/invalid_access', methods=['GET'])
+def invalid_access():
+    return render_template('invalid_access.html')
 
 @app.route('/admin')
 def admin():
