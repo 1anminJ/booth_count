@@ -158,3 +158,39 @@ form button:hover {
 .footer a:hover {
   text-decoration: underline;
 }
+
+.input-button-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.input-button-group .input-field {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  height: 48px;
+  line-height: 24px;
+}
+
+.input-button-group .button {
+  width: auto;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .input-button-group {
+    flex-direction: column;
+  }
+
+  .input-button-group .button {
+    width: 100%;
+  }
+}
