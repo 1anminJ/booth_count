@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 로그인</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics-compat.js"></script>
+</head>
+<body>
+  <header class="top-header">
+    <div class="header-content">관리자</div>
+  </header>
+  <div class="page-wrapper">
+    <div class="content-wrapper">
+      <div class="container">
+        <h2>관리자 로그인</h2>
+        <div id="recaptcha-container"></div>
+        <div class="input-button-group">
+          <input type="text" id="phone" placeholder="전화번호 (하이픈 제외)" class="input-field">
+          <button onclick="sendCode()" class="button" id="send-button">인증번호 전송</button>
+        </div>
+        <div id="verification-section" style="display:none;">
+          <div class="input-button-group">
+            <input type="text" id="verification-code" placeholder="인증번호" class="input-field">
+            <button onclick="verifyCode()" id="verify-button" class="button">확인</button>
+          </div>
+        </div>
+        <div id="error-message" style="color: red; margin-top: 10px;"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <p>Developed by
+      <a href="https://github.com/1anminJ" target="_blank">@1anminJ</a> &amp;
+      <a href="https://github.com/ysw789" target="_blank">@ysw789</a> &amp;
+      <a href="https://github.com/JungwooJoon" target="_blank">@JungwooJoon</a>
+    </p>
+  </footer>
+
+  <script>
+      // Firebase 설정
+      const firebaseConfig = {
+      apiKey: "{{ firebase_config.apiKey }}",
+      authDomain: "{{ firebase_config.authDomain }}",
+      projectId: "{{ firebase_config.projectId }}",
+      storageBucket: "{{ firebase_config.storageBucket }}",
+      messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+      appId: "{{ firebase_config.appId }}",
+      measurementId: "{{ firebase_config.measurementId }}"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    // reCAPTCHA 초기화
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible',
+      'callback': () => {
+        // reCAPTCHA 인증 완료
+      }
+    });
+
+    // 인증번호 전송
+    function sendCode() {
+      const phoneInput = document.getElementById('phone');
+      let phoneNumber = phoneInput.value.trim();
+
+      if (!validatePhone(phoneNumber)) {
+        document.getElementById('error-message').textContent = '올바른 전화번호를 입력해주세요.';
+        return;
+      }
+
+      phoneNumber = formatPhoneNumber(phoneNumber);
+      showLoading(true);
+
+      firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+        .then((confirmationResult) => {
+          window.confirmationResult = confirmationResult;
+          document.getElementById('verification-section').style.display = 'block';
+          document.getElementById('error-message').textContent = '';
+          phoneInput.disabled = true; // 인증번호 발송 후 전화번호 변경 방지
+        })
+        .catch((error) => {
+          handleError(error, '인증번호 전송');
+          // reCAPTCHA 재설정
+          window.recaptchaVerifier.render().then(widgetId => {
+            window.recaptchaVerifier.reset(widgetId);
+          });
+        })
+        .finally(() => {
+          showLoading(false);
+        });
+    }
+
+    // 인증번호 확인
+    function verifyCode() {
+      const code = document.getElementById('verification-code').value.trim();
+      if (!code) {
+        document.getElementById('error-message').textContent = '인증번호를 입력해주세요.';
+        return;
+      }
+      showLoading(true);
+
+      window.confirmationResult.confirm(code)
+        .then((result) => {
+          return result.user.getIdToken().then(idToken => {
+            return fetch('/verify_user', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken: idToken })
+            });
+          });
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '/admin';
+          } else {
+            document.getElementById('error-message').textContent = data.message || '인증 실패';
+          }
+        })
+        .catch((error) => {
+          handleError(error, '인증');
+        })
+        .finally(() => {
+          showLoading(false);
+        });
+    }
+
+    // 전화번호 유효성 검사 함수
+    function validatePhone(phone) {
+      // 기본적인 전화번호 형식 검사
+      const phoneRegex = /^[0-9+\-\s()]+$/;
+      return phoneRegex.test(phone) && phone.length >= 10;
+    }
+
+    // 전화번호 포맷팅 함수
+    function formatPhoneNumber(phone) {
+      // 국가 코드가 없으면 한국(+82) 추가
+      if (!phone.startsWith('+')) {
+        // 첫 번째 0을 제거하고 +82 추가
+        phone = phone.startsWith('0') ? '+82' + phone.substring(1) : '+82' + phone;
+      }
+      return phone;
+    }
+
+    // 로딩 상태 표시 함수
+    function showLoading(isLoading) {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        // 버튼 활성화/비활성화만 처리
+        button.disabled = isLoading;
+
+        // 텍스트 변경 (스피너 없이)
+        if (isLoading) {
+            button.textContent = '처리 중...';
+          } else {
+            if (button.id === 'verify-button') {
+              button.textContent = '확인';
+            } else if (button.id === 'send-button') {
+              button.textContent = '인증번호 전송';
+            }
+          }
+      });
+    }
+
+    // 오류 처리 함수
+    function handleError(error, action) {
+      const errorMap = {
+        'auth/invalid-phone-number': '유효하지 않은 전화번호 형식입니다.',
+        'auth/too-many-requests': '너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.',
+        'auth/quota-exceeded': '일일 할당량을 초과했습니다.',
+        'auth/invalid-verification-code': '잘못된 인증번호입니다.',
+        'auth/code-expired': '인증번호가 만료되었습니다.',
+        'auth/missing-verification-code': '인증번호를 입력해주세요.',
+        'default': `${action} 중 오류가 발생했습니다: ${error.message}`
+      };
+
+      document.getElementById('error-message').textContent = errorMap[error.code] || errorMap['default'];
+    }
+  </script>
+</body>
+</html>
