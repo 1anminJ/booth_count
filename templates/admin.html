@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .button {
+      padding: 8px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="top-header">
+    <div class="header-content">DMU 관리자</div>
+  </header>
+  <div class="page-wrapper">
+    <div class="content-wrapper">
+      <div class="container">
+        <div class="admin-header">
+          <h2>피드백 관리 대시보드</h2>
+          <div>
+            <span>관리자: {{ admin_phone }}</span>
+            <a href="/admin/logout" class="button">로그아웃</a>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>사용자 UUID</th>
+              <th>부스 번호</th>
+              <th>사용자 유형</th>
+              <th>만족 여부</th>
+              <th>IP</th>
+              <th>시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr>
+              <td>{{ log.id }}</td>
+              <td>{{ log.uuid }}</td>
+              <td>{{ log.area }}</td>
+              <td>{{ log.identity.value }}</td>
+              <td>{{ "만족" if log.satisfaction else "불만족" }}</td>
+              <td>{{ log.ip }}</td>
+              <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <p>Developed by
+      <a href="https://github.com/1anminJ" target="_blank">@1anminJ</a> &amp;
+      <a href="https://github.com/ysw789" target="_blank">@ysw789</a> &amp;
+      <a href="https://github.com/JungwooJoon" target="_blank">@JungwooJoon</a>
+    </p>
+  </footer>
+</body>
+</html>
