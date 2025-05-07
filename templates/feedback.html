@@ -10,33 +10,64 @@
 <header class="top-header">
     <div class="header-content">DMU</div>
   </header>
-  <div class="page-wrapper">
-    <div class="content-wrapper">
-      <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
-      <div class="container">
-      <h2>이 부스에 만족하셨습니까?</h2>
+<div class="page-wrapper">
+  <div class="content-wrapper">
+    <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
+    <div class="container">
+      <h2>이 부스에 만족하셨나요?</h2>
       <form id="feedbackForm" method="POST" action="/submit">
-          <input type="hidden" name="uuid" value="{{ uuid }}">
-          <input type="hidden" name="area" value="{{ area }}">
-          <input type="hidden" name="identity" value="{{ identity }}">
-          <input type="hidden" name="satisfaction" id="satisfaction">
+        <input type="hidden" name="uuid" value="{{ uuid }}">
+        <input type="hidden" name="area" value="{{ area }}">
+        <input type="hidden" name="identity" value="{{ identity }}">
 
-          <div class="button-group">
-              <button type="button" onclick="submitFeedback(true)">예</button>
-              <button type="button" class="button-no" onclick="submitFeedback(false)">아니요</button>
-          </div>
+        <div class="rating">
+          <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
+          <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+          <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+          <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+          <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
+        </div>
+
+        <div class="submit-button">
+          <button type="submit">제출</button>
+        </div>
+
+          <script>
+              function submitFeedback() {
+                const form = document.getElementById("feedbackForm");
+                const formData = new FormData(form);
+
+                // rating 값 가져오기
+                const rating = formData.get("rating");
+                if (!rating) {
+                  alert("별점을 선택해주세요.");
+                  return;
+                }
+
+                fetch("/submit", {
+                  method: "POST",
+                  body: formData
+                })
+                .then(res => {
+                  if (res.redirected) {
+                    window.location.href = res.url;
+                  } else if (res.ok) {
+                    alert("제출 완료!");
+                  } else {
+                    res.text().then(alert);
+                  }
+                })
+                .catch(error => {
+                  alert("에러가 발생했습니다.");
+                  console.error(error);
+                });
+              }
+            </script>
 
       </form>
     </div>
-    </div>
   </div>
-
-    <script>
-        function submitFeedback(value) {
-          document.getElementById("satisfaction").value = value;
-          document.getElementById("feedbackForm").submit();
-        }
-    </script>
+</div>
 <footer class="footer">
   <p>Developed by
     <a href="https://github.com/1anminJ" target="_blank">@1anminJ</a> &amp;

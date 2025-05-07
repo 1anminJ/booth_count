@@ -3,9 +3,9 @@ from models import db, Log
 
 class LogService:
     @staticmethod
-    def validate_params(uuid, area, identity, satisfaction):
+    def validate_params(uuid, area, identity, rating):
         # 필수 파라미터 확인
-        if not uuid or not area or not identity or satisfaction is None:
+        if not uuid or not area or not identity or rating is None:
             return False
 
         # area가 숫자인지 확인
@@ -25,22 +25,21 @@ class LogService:
         return record is not None
 
     @staticmethod
-    def add_log(uuid, identity, area, ip, satisfaction=None):
+    def add_log(uuid, identity, area, ip, rating=None):
         if LogService.is_duplicate_today(uuid, area):
             return None
 
-        if isinstance(satisfaction, str):
-            satisfaction = satisfaction.lower() == 'true'
-
         if ip and ',' in ip:
             ip = ip.split(',')[0].strip()
+
+        rating_int = int(rating)
 
         new_log = Log(
             uuid=uuid,
             area=area,
             identity=identity,
             ip=ip,
-            satisfaction=satisfaction,
+            rating=rating_int,
             timestamp=datetime.now(),
         )
         db.session.add(new_log)
