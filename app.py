@@ -90,7 +90,7 @@ def submit():
 def invalid_access():
     return render_template('invalid_access.html')
 
-@app.route('/download')
+@app.route('/admin/download-csv')
 def download_csv():
     logs = Log.query.all()
 
@@ -117,7 +117,7 @@ def download_csv():
         download_name='노들축제 우수부스.xlsx'
     )
 
-@app.route('/admin_login', methods=['GET'])
+@app.route('/admin/login', methods=['GET'])
 def admin_login():
     if session.get('admin_logged_in'):
         return redirect('/admin')
@@ -135,7 +135,7 @@ def admin_login():
     return render_template('admin_login.html', firebase_config=firebase_config)
 
 
-@app.route('/verify_user', methods=['POST'])
+@app.route('/admin/verify', methods=['POST'])
 def verify_user():
     data = request.json
 
@@ -171,7 +171,7 @@ def verify_user():
 @app.route('/admin')
 def admin():
     if not session.get('admin_logged_in'):
-        return redirect('/admin_login')
+        return redirect('/admin/login')
 
     logs = Log.query.all()
     return render_template('admin.html', logs=logs, admin_phone=session.get('admin_phone'))
@@ -179,7 +179,7 @@ def admin():
 @app.route('/admin/logout')
 def admin_logout():
     session.clear()
-    return redirect('/admin_login')
+    return redirect('/admin/login')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
