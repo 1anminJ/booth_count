@@ -168,7 +168,7 @@ def admin_login():
     return render_template('admin_login.html', firebase_config=firebase_config)
 
 
-@app.route('/verify_user', methods=['POST'])
+@app.route('/admin/verify', methods=['POST'])
 def verify_user():
     data = request.json
 
@@ -214,6 +214,7 @@ def admin_dashboard():
 
     return render_template(
         'admin.html',
+        admin_phone=session.get('admin_phone'),
         logs=recent_logs,
         total_count=total_count,
         area_labels=stats['area_labels'],
@@ -247,6 +248,7 @@ def admin_by_date(date_str):
 
     return render_template(
         'admin.html',
+        admin_phone=session.get('admin_phone'),
         logs=logs_for_date,
         selected_date_str=selected_date_obj.strftime('%Y-%m-%d'),  # 템플릿에서 사용할 날짜 문자열
         total_count=total_count,  # 전체 로그 수

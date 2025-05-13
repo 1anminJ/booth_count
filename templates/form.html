@@ -138,11 +138,11 @@
             eventAreaPolygon.map(point => [point[1], point[0]])
           );
 
-          {#if (!isInEventArea) {#}
-          {#  console.error("유효하지 않은 위치:", userLat, userLon);#}
-          {#  alert("유효하지 않은 위치입니다. 부스 근처에서 다시 시도해주세요.");#}
-          {#  return;#}
-          {# } #}
+          if (!isInEventArea) {
+            console.error("유효하지 않은 위치:", userLat, userLon);
+            alert("유효하지 않은 위치입니다. 부스 근처에서 다시 시도해주세요.");
+            return;
+           }
 
           // 위치가 유효하면 폼 제출
           document.getElementById("identityForm").submit();
