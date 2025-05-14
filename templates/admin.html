@@ -87,7 +87,7 @@
     </div>
 </header>
 <div class="filter-container">
-    <h2>기록 조회({% if date %}{{ date }}{% else %}전체{% endif %})</h2>
+    <h2>기록 조회({% if selected_date_str %}{{ selected_date_str }}{% else %}전체{% endif %})</h2>
     <input type="date" id="datePicker" onchange="loadLogsByDate(this.value)">
     <a href="/admin" class="button">전체</a>
     <button id="download" class="button">다운로드</button>
