@@ -90,12 +90,8 @@
       setIdentity(identity);
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          {#const userLat = position.coords.latitude;#}
-          {#const userLon = position.coords.longitude;#}
-
-          const userLat = 37.50062214444485;
-          const userLon = 126.86686416992778;
-
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
 
           // 폴리곤 경계 정의 (위도, 경도)
           const eventAreaPolygon = [
