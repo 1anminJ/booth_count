@@ -13,6 +13,7 @@ import json
 import firebase_admin
 from firebase_admin import credentials, auth
 import pandas as pd
+from settings_service import SettingsService
 
 load_dotenv()
 
@@ -116,7 +117,15 @@ def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
 
 @app.route('/', methods=['GET'])
 def form():
-    return render_template('form.html')
+    # 서비스 비활성화 상태 확인
+    if not SettingsService.is_service_activated():
+        return render_template('inactive.html')
+
+    area = request.args.get('area')
+    if not area:
+        return redirect('/invalid_access')
+
+    return render_template('form.html', area=area)
 
 
 @app.route('/feedback', methods=['POST'])
@@ -212,6 +221,9 @@ def admin_dashboard():
     # 전체 통계 데이터 가져오기
     stats = _get_statistics()
 
+    # 서비스 활성화 상태 확인
+    service_activated = SettingsService.is_service_activated()
+
     return render_template(
         'admin.html',
         admin_phone=session.get('admin_phone'),
@@ -220,7 +232,8 @@ def admin_dashboard():
         area_labels=stats['area_labels'],
         area_data=stats['area_data'],
         identity_labels=stats['identity_labels'],
-        identity_data=stats['identity_data']
+        identity_data=stats['identity_data'],
+        service_activated=service_activated
     )
 
 
@@ -246,6 +259,8 @@ def admin_by_date(date_str):
     # 선택된 날짜의 통계 데이터 가져오기
     stats_for_date = _get_statistics(filter_date=selected_date_obj)
 
+    service_activated = SettingsService.is_service_activated()
+
     return render_template(
         'admin.html',
         admin_phone=session.get('admin_phone'),
@@ -257,6 +272,7 @@ def admin_by_date(date_str):
         area_data=stats_for_date['area_data'],
         identity_labels=stats_for_date['identity_labels'],
         identity_data=stats_for_date['identity_data'],
+        service_activated=service_activated
     )
 
 
@@ -280,6 +296,20 @@ def download_date_excel(date_str):
     logs = Log.query.filter(func.date(Log.timestamp) == selected_date).order_by(Log.timestamp.asc()).all()  # 시간순 정렬 추가
     return _generate_excel_response(logs, f'노들축제 우수부스({selected_date.strftime("%Y-%m-%d")})')
 
+
+@app.route('/admin/toggle-service', methods=['POST'])
+def toggle_service():
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'message': '권한이 없습니다'}), 403
+
+    data = request.json
+    active = data.get('active', False)
+
+    try:
+        SettingsService.set_service_status(active)
+        return jsonify({'success': True, 'active': active})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/admin/logout')
 def admin_logout():
