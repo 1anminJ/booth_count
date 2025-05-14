@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>신분 선택</title>
+  <title>소속 선택</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -14,7 +14,7 @@
     <div class="content-wrapper">
       <img id="donggrae" src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
       <div class="container">
-      <h2>당신의 신분을 선택해주세요</h2>
+      <h2>당신의 소속을 선택해주세요</h2>
       <form id="identityForm" method="POST" action="/feedback">
         <input type="hidden" name="uuid" id="uuid">
         <input type="hidden" name="area" id="area">
@@ -22,7 +22,7 @@
         <button type="button" onclick="checkLocationAndSubmit('STUDENT')">재학생</button>
         <button type="button" onclick="checkLocationAndSubmit('GRADUATE')">졸업생</button>
         <button type="button" onclick="checkLocationAndSubmit('STAFF')">교직원</button>
-        <button type="button" onclick="checkLocationAndSubmit('GENERAL')">일반인</button>
+        <button type="button" onclick="checkLocationAndSubmit('GENERAL')">외부인</button>
       </form>
         </div>
     </div>

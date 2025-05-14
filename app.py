@@ -132,16 +132,16 @@ def submit():
     uuid = request.form.get('uuid')
     area = request.form.get('area')
     identity = request.form.get('identity')
-    satisfaction = request.form.get('satisfaction')
+    rating = request.form.get('rating')
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-    if not LogService.validate_params(uuid, area, identity, satisfaction):
+    if not LogService.validate_params(uuid, area, identity, rating):
         return render_template('invalid_access.html')
 
     if LogService.is_duplicate_today(uuid, area):
         return render_template('duplicate.html')
 
-    LogService.add_log(uuid, identity, area, ip, satisfaction)
+    LogService.add_log(uuid, identity, area, ip, rating)
     return render_template('thanks.html', identity=identity)
 
 
