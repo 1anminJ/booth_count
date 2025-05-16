@@ -15,7 +15,7 @@
     <img src="{{ url_for('static', filename='img/nodle.png') }}" alt="노들 이미지" class="top-image">
     <div class="container">
       <h2>이 부스에 만족하셨나요?</h2>
-      <form id="feedbackForm" method="POST" action="/submit">
+      <form id="feedbackForm" method="POST" action="/submit" onsubmit="return validateForm()">
         <input type="hidden" name="uuid" value="{{ uuid }}">
         <input type="hidden" name="area" value="{{ area }}">
         <input type="hidden" name="identity" value="{{ identity }}">
@@ -31,39 +31,19 @@
         <div class="submit-button">
           <button type="submit">제출</button>
         </div>
+        <script>
+          function validateForm() {
+            const ratingSelected = document.querySelector('input[name="rating"]:checked');
 
-          <script>
-              function submitFeedback() {
-                const form = document.getElementById("feedbackForm");
-                const formData = new FormData(form);
+            // rating이 선택되지 않았으면 alert 표시 후 제출 중단
+            if (!ratingSelected) {
+              alert("별점을 선택해주세요.");
+              return false;
+            }
 
-                // rating 값 가져오기
-                const rating = formData.get("rating");
-                if (!rating) {
-                  alert("별점을 선택해주세요.");
-                  return;
-                }
-
-                fetch("/submit", {
-                  method: "POST",
-                  body: formData
-                })
-                .then(res => {
-                  if (res.redirected) {
-                    window.location.href = res.url;
-                  } else if (res.ok) {
-                    alert("제출 완료!");
-                  } else {
-                    res.text().then(alert);
-                  }
-                })
-                .catch(error => {
-                  alert("에러가 발생했습니다.");
-                  console.error(error);
-                });
-              }
-            </script>
-
+            return true;
+          }
+        </script>
       </form>
     </div>
   </div>
