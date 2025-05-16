@@ -138,6 +138,9 @@ def feedback():
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    if not SettingsService.is_service_activated():
+        return render_template('inactive.html')
+
     uuid = request.form.get('uuid')
     area = request.form.get('area')
     identity = request.form.get('identity')
